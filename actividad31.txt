@@ -1,0 +1,308 @@
+MacBook-Pro-de-Brian:desktop Brian$ cd actividad31
+MacBook-Pro-de-Brian:actividad31 Brian$ psql
+psql (10.4)
+Type "help" for help.
+
+Brian=# CREATE DATABASE call_list
+Brian-# ;
+CREATE DATABASE
+Brian=# CREATE TABLE users(id SERIAL PRIMARY KEY, first_name VARCHAR(50), email VARCHAR(50))
+Brian-# \c call_list
+You are now connected to database "call_list" as user "Brian".
+call_list-# CREATE TABLE users(id SERIAL PRIMARY KEY, first_name VARCHAR(50), email VARCHAR(50))
+call_list-# INSERT INTO users(id, first_name, email) VALUES('1', 'Brian','zalaquett.brian@gmail.com')
+call_list-# SELECT * FROM users
+call_list-# SELECT id FROM users
+call_list-# CREATE TABLE users(id SERIAL PRIMARY KEY, first_name VARCHAR(50), email VARCHAR(50));
+ERROR:  syntax error at or near "CREATE"
+LINE 2: CREATE TABLE users(id SERIAL PRIMARY KEY, first_name VARCHAR...
+        ^
+call_list=# ;
+call_list=# INSERT INTO users (id, first_name, email)VALUES('1', 'Brian', 'zalaquett@gmail.com');
+ERROR:  relation "users" does not exist
+LINE 1: INSERT INTO users (id, first_name, email)VALUES('1', 'Brian'...
+                    ^
+call_list=# SELECT * FROM call_list
+call_list-# ;
+ERROR:  relation "call_list" does not exist
+LINE 1: SELECT * FROM call_list
+                      ^
+call_list=# SELECT * FROM users;
+ERROR:  relation "users" does not exist
+LINE 1: SELECT * FROM users;
+                      ^
+call_list=# CREATE TABLE users (id SERIAL PRIMARY KEY, first_name, email);
+ERROR:  syntax error at or near ","
+LINE 1: ...EATE TABLE users (id SERIAL PRIMARY KEY, first_name, email);
+                                                              ^
+call_list=# SELECT * FROM call_list
+;
+ERROR:  relation "call_list" does not exist
+LINE 1: SELECT * FROM call_list
+                      ^
+call_list=# SELECT * FROM users;
+ERROR:  relation "users" does not exist
+LINE 1: SELECT * FROM users;
+                      ^
+call_list=# CREATE TABLE users (id SERIAL PRIMARY KEY, first_name VARCHAR(20), email VARCHAR(20));
+CREATE TABLE
+call_list=# SELECT * FROM users
+call_list-# ;
+ id | first_name | email 
+----+------------+-------
+(0 rows)
+
+call_list=# INSERT INTO ('1', 'Brian','zalaquett');
+ERROR:  syntax error at or near "("
+LINE 1: INSERT INTO ('1', 'Brian','zalaquett');
+                    ^
+call_list=# INSERT INTO users ('1', 'Brian','zalaquett');
+ERROR:  syntax error at or near "'1'"
+LINE 1: INSERT INTO users ('1', 'Brian','zalaquett');
+                           ^
+call_list=# SELECT * FROM users                                                 ;
+ id | first_name | email 
+----+------------+-------
+(0 rows)
+
+call_list=# INSERT INTO users VALUES ('1', 'Brian','zalaquett@gmail.com');
+INSERT 0 1
+call_list=# select * from users
+call_list-# ;
+ id | first_name |        email        
+----+------------+---------------------
+  1 | Brian      | zalaquett@gmail.com
+(1 row)
+
+call_list=# INSERT INTO users VALUES ('1', 'Carlos','zatt@gmail.com');
+ERROR:  duplicate key value violates unique constraint "users_pkey"
+DETAIL:  Key (id)=(1) already exists.
+call_list=# INSERT INTO users VALUES ('2', 'Carlos','zatt@gmail.com');
+INSERT 0 1
+call_list=# INSERT INTO users VALUES ('3', 'Laura','zasastt@gmail.com');
+INSERT 0 1
+call_list=# select * from users                                           
+;
+ id | first_name |        email        
+----+------------+---------------------
+  1 | Brian      | zalaquett@gmail.com
+  2 | Carlos     | zatt@gmail.com
+  3 | Laura      | zasastt@gmail.com
+(3 rows)
+
+call_list=# CREATE TABLE calls(id PRIMARY KEY, phone INTEGER, date DATE, user_idSERIAL REFERENCES users(id);
+call_list(# );
+ERROR:  syntax error at or near "PRIMARY"
+LINE 1: CREATE TABLE calls(id PRIMARY KEY, phone INTEGER, date DATE,...
+                              ^
+call_list=# CREATE TABLE calls(id PRIMARY KEY, phone INTEGER, date DATE, user_idSERIAL REFERENCES users(id)
+);
+ERROR:  syntax error at or near "PRIMARY"
+LINE 1: CREATE TABLE calls(id PRIMARY KEY, phone INTEGER, date DATE,...
+                              ^
+call_list=# CREATE TABLE calls(id SERIAL PRIMARY KEY, phone INTEGER, date DATE, user_idSERIAL REFERENCES users(id));
+ERROR:  syntax error at or near "REFERENCES"
+LINE 1: ...MARY KEY, phone INTEGER, date DATE, user_idSERIAL REFERENCES...
+                                                             ^
+call_list=# CREATE TABLE calls(id SERIAL PRIMARY KEY, phone INTEGER, date DATE, user_id SERIAL REFERENCES users(id));
+CREATE TABLE
+call_list=# \d calls
+                               Table "public.calls"
+ Column  |  Type   | Collation | Nullable |                Default                 
+---------+---------+-----------+----------+----------------------------------------
+ id      | integer |           | not null | nextval('calls_id_seq'::regclass)
+ phone   | integer |           |          | 
+ date    | date    |           |          | 
+ user_id | integer |           | not null | nextval('calls_user_id_seq'::regclass)
+Indexes:
+    "calls_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "calls_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(id)
+
+call_list=# ALTER TABLE users ADD COLUMN last_name VARCHAR(20);
+ALTER TABLE
+call_list=# SELECT * FROM user
+call_list-# SELECT * FROM users
+call_list-# ;
+ERROR:  syntax error at or near "SELECT"
+LINE 2: SELECT * FROM users
+        ^
+call_list=# SELECT * FROM users;
+ id | first_name |        email        | last_name 
+----+------------+---------------------+-----------
+  1 | Brian      | zalaquett@gmail.com | 
+  2 | Carlos     | zatt@gmail.com      | 
+  3 | Laura      | zasastt@gmail.com   | 
+(3 rows)
+
+call_list=# INSERT INTO users (last_name) VALUES('Molina');
+ERROR:  duplicate key value violates unique constraint "users_pkey"
+DETAIL:  Key (id)=(1) already exists.
+call_list=# INSERT INTO users (last_name)  VALUES('Molina') where id = 2;
+ERROR:  syntax error at or near "where"
+LINE 1: INSERT INTO users (last_name)  VALUES('Molina') where id = 2...
+                                                        ^
+call_list=# INSERT INTO users (last_name) VALUES('Molina');
+ERROR:  duplicate key value violates unique constraint "users_pkey"
+DETAIL:  Key (id)=(2) already exists.
+call_list=# INSERT INTO users (2) VALUES('Molina');
+ERROR:  syntax error at or near "2"
+LINE 1: INSERT INTO users (2) VALUES('Molina');
+                           ^
+call_list=# UPDATE users SET last_name = Molina WHERE id = '2';
+ERROR:  column "molina" does not exist
+LINE 1: UPDATE users SET last_name = Molina WHERE id = '2';
+                                     ^
+call_list=# UPDATE users SET last_name = 'Molina' WHERE id = '2';
+UPDATE 1
+call_list=# SELECT * FROM users
+call_list-# ;
+ id | first_name |        email        | last_name 
+----+------------+---------------------+-----------
+  1 | Brian      | zalaquett@gmail.com | 
+  3 | Laura      | zasastt@gmail.com   | 
+  2 | Carlos     | zatt@gmail.com      | Molina
+(3 rows)
+
+call_list=# UPDATE users SET last_name = 'Soto' WHERE id = '3';
+UPDATE 1
+call_list=# SELECT * FROM users
+;
+ id | first_name |        email        | last_name 
+----+------------+---------------------+-----------
+  1 | Brian      | zalaquett@gmail.com | 
+  2 | Carlos     | zatt@gmail.com      | Molina
+  3 | Laura      | zasastt@gmail.com   | Soto
+(3 rows)
+
+call_list=# select * from calls
+call_list-# ;
+ id | phone | date | user_id 
+----+-------+------+---------
+(0 rows)
+
+call_list=# INSERT INTO calls VALUES (1, 99887656, current_time_stamp, 3);
+ERROR:  column "current_time_stamp" does not exist
+LINE 1: INSERT INTO calls VALUES (1, 99887656, current_time_stamp, 3...
+                                               ^
+call_list=# INSERT INTO calls VALUES (1, 99887656, current_timestamp, 3);
+INSERT 0 1
+call_list=# INSERT INTO calls VALUES (2, 24354756, current_timestamp, 2);
+INSERT 0 1
+call_list=# SELECT * FROM users                                           
+;
+ id | first_name |        email        | last_name 
+----+------------+---------------------+-----------
+  1 | Brian      | zalaquett@gmail.com | 
+  2 | Carlos     | zatt@gmail.com      | Molina
+  3 | Laura      | zasastt@gmail.com   | Soto
+(3 rows)
+
+call_list=# INSERT INTO users VALUES (4, Maria, mari@gmail.com,ssoto);
+ERROR:  column "maria" does not exist
+LINE 1: INSERT INTO users VALUES (4, Maria, mari@gmail.com,ssoto);
+                                     ^
+call_list=# INSERT INTO users VALUES (4, Maria, mari@gmail.com, Soto);
+ERROR:  column "maria" does not exist
+LINE 1: INSERT INTO users VALUES (4, Maria, mari@gmail.com, Soto);
+                                     ^
+call_list=# INSERT INTO users VALUES ('4', 'Maria', 'mari@gmail.com', 'Soto');
+INSERT 0 1
+call_list=# SELECT * FROM users                                           
+;
+ id | first_name |        email        | last_name 
+----+------------+---------------------+-----------
+  1 | Brian      | zalaquett@gmail.com | 
+  2 | Carlos     | zatt@gmail.com      | Molina
+  3 | Laura      | zasastt@gmail.com   | Soto
+  4 | Maria      | mari@gmail.com      | Soto
+(4 rows)
+
+call_list=# SELECT users.first_name, COUNT(calls.user_id) from users
+call_list-# LEFT JOIN calls on user.id = calls.user_id
+call_list-# GROUP BY first_name;
+ERROR:  syntax error at or near "."
+LINE 2: LEFT JOIN calls on user.id = calls.user_id
+                               ^
+call_list=# SELECT users.first_name, COUNT(calls.user_id) from users
+LEFT JOIN calls on users.id = calls.user_id
+GROUP BY first_name;
+ first_name | count 
+------------+-------
+ Carlos     |     1
+ Maria      |     0
+ Laura      |     1
+ Brian      |     0
+(4 rows)
+
+call_list=# SELECT * FROM calls
+call_list-# INNER JOIN users on calls.users_id = user.id
+call_list-# WHERE users.first_name = 'carlos'
+call_list-# ORDER BY date desc;
+ERROR:  syntax error at or near "."
+LINE 2: INNER JOIN users on calls.users_id = user.id
+                                                 ^
+call_list=# SELECT * FROM calls
+INNER JOIN users on calls.users_id = user.id
+WHERE users.first_name = 'carlos'
+ORDER BY date desc;
+ERROR:  syntax error at or near "."
+LINE 2: INNER JOIN users on calls.users_id = user.id
+                                                 ^
+call_list=# SELECT * FROM calls
+INNER JOIN users on calls.users_id = users.id
+WHERE users.first_name = 'carlos'
+ORDER BY date desc;
+ERROR:  column calls.users_id does not exist
+LINE 2: INNER JOIN users on calls.users_id = users.id
+                            ^
+HINT:  Perhaps you meant to reference the column "calls.user_id".
+call_list=# SELECT * FROM calls
+INNER JOIN users on calls.users_id = users.id
+WHERE users.first_name = 'carlos'
+ORDER BY date desc;
+ERROR:  column calls.users_id does not exist
+LINE 2: INNER JOIN users on calls.users_id = users.id
+                            ^
+HINT:  Perhaps you meant to reference the column "calls.user_id".
+call_list=# Select * from calls
+call_list-# ;
+ id |  phone   |    date    | user_id 
+----+----------+------------+---------
+  1 | 99887656 | 2018-07-06 |       3
+  2 | 24354756 | 2018-07-06 |       2
+(2 rows)
+
+call_list=# SELECT * FROM calls
+INNER JOIN users on calls.user_id = user.id
+WHERE user.first_name = 'carlos'
+ORDER BY date desc;
+ERROR:  syntax error at or near "."
+LINE 2: INNER JOIN users on calls.user_id = user.id
+                                                ^
+call_list=# SELECT * FROM calls
+INNER JOIN users on calls.user_id = users.id
+WHERE user.first_name = 'carlos'
+ORDER BY date desc;
+ERROR:  syntax error at or near "."
+LINE 3: WHERE user.first_name = 'carlos'
+                  ^
+call_list=# SELECT * FROM calls
+INNER JOIN users on calls.user_id = users.id
+WHERE users.first_name = 'carlos'
+ORDER BY date desc;
+ id | phone | date | user_id | id | first_name | email | last_name 
+----+-------+------+---------+----+------------+-------+-----------
+(0 rows)
+
+call_list=# select * from users
+call_list-# ;
+ id | first_name |        email        | last_name 
+----+------------+---------------------+-----------
+  1 | Brian      | zalaquett@gmail.com | 
+  2 | Carlos     | zatt@gmail.com      | Molina
+  3 | Laura      | zasastt@gmail.com   | Soto
+  4 | Maria      | mari@gmail.com      | Soto
+(4 rows)
+
+call_list=# 
